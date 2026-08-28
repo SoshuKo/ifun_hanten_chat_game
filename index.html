@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#15100d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>イーフン飯店</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <main id="app" aria-label="イーフン飯店 会話ゲーム">
+    <canvas id="gameCanvas" aria-label="イーフン飯店のゲーム画面"></canvas>
+
+    <div id="loading" class="loading-layer" role="status" aria-live="polite">
+      <div class="loading-card">
+        <div class="spinner" aria-hidden="true"></div>
+        <div id="loadingText">イーフン飯店を準備中…</div>
+      </div>
+    </div>
+
+    <header class="topbar">
+      <div class="title-cluster">
+        <strong>イーフン飯店</strong>
+        <span id="npcCount" class="count-pill">1 / 54</span>
+      </div>
+      <div class="top-actions">
+        <button id="zoomOutBtn" class="icon-button" type="button" aria-label="縮小">−</button>
+        <button id="zoomInBtn" class="icon-button" type="button" aria-label="拡大">＋</button>
+        <button id="helpBtn" class="top-button" type="button">操作</button>
+        <button id="characterBtn" class="top-button primary" type="button">召喚 / 削除</button>
+      </div>
+    </header>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <div id="nearbyBadge" class="nearby-badge" aria-live="polite"></div>
+
+    <section id="mobileControls" class="mobile-controls" aria-label="ゲーム操作">
+      <div class="dpad" aria-label="十字キー">
+        <button class="dpad-button up" data-dir="up" type="button" aria-label="上へ移動">▲</button>
+        <button class="dpad-button left" data-dir="left" type="button" aria-label="左へ移動">◀</button>
+        <button class="dpad-button center" type="button" tabindex="-1" aria-hidden="true"></button>
+        <button class="dpad-button right" data-dir="right" type="button" aria-label="右へ移動">▶</button>
+        <button class="dpad-button down" data-dir="down" type="button" aria-label="下へ移動">▼</button>
+      </div>
+
+      <div class="action-cluster">
+        <button id="talkBtn" class="talk-button" type="button">
+          <span class="talk-main">話す</span>
+          <span id="talkTarget" class="talk-target">近くに誰もいません</span>
+        </button>
+      </div>
+    </section>
+
+    <section id="dialoguePanel" class="dialogue-panel" aria-hidden="true">
+      <div class="dialogue-speaker">
+        <img id="dialoguePortrait" alt="" width="96" height="116">
+        <div>
+          <div class="eyebrow">会話</div>
+          <h2 id="dialogueName">---</h2>
+        </div>
+      </div>
+      <p id="dialogueText" class="dialogue-text"></p>
+      <div class="dialogue-actions">
+        <button id="dialogueNextBtn" type="button" class="panel-button primary">次の話題</button>
+        <button id="dialogueCloseBtn" type="button" class="panel-button">閉じる</button>
+      </div>
+    </section>
+
+    <div id="characterOverlay" class="overlay" aria-hidden="true">
+      <section class="panel character-panel" role="dialog" aria-modal="true" aria-labelledby="characterPanelTitle">
+        <div class="panel-header">
+          <div>
+            <div class="eyebrow">CHARACTERS</div>
+            <h2 id="characterPanelTitle">キャラクター召喚 / 削除</h2>
+          </div>
+          <button id="characterCloseBtn" class="close-button" type="button" aria-label="閉じる">×</button>
+        </div>
+        <div class="character-toolbar">
+          <label class="search-box">
+            <span class="sr-only">キャラクター検索</span>
+            <input id="characterSearch" type="search" inputmode="search" placeholder="名前で検索">
+          </label>
+          <button id="randomSummonBtn" class="panel-button" type="button">ランダム召喚</button>
+          <button id="removeAllBtn" class="panel-button danger" type="button">全削除</button>
+        </div>
+        <div class="panel-note">召喚は1キャラクターにつき1人。プレイヤーの近くの通行可能な場所に現れます。</div>
+        <div id="characterList" class="character-list"></div>
+      </section>
+    </div>
+
+    <div id="helpOverlay" class="overlay" aria-hidden="true">
+      <section class="panel help-panel" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+        <div class="panel-header">
+          <div>
+            <div class="eyebrow">HOW TO PLAY</div>
+            <h2 id="helpTitle">操作方法</h2>
+          </div>
+          <button id="helpCloseBtn" class="close-button" type="button" aria-label="閉じる">×</button>
+        </div>
+        <div class="help-grid">
+          <div><strong>移動</strong><span>画面の十字キー / WASD / 矢印キー</span></div>
+          <div><strong>話す</strong><span>「話す」ボタン / E / Enter / Space</span></div>
+          <div><strong>キャラ</strong><span>「召喚 / 削除」 / M / C</span></div>
+          <div><strong>閉じる</strong><span>各ウインドウの× / Esc</span></div>
+        </div>
+        <p class="help-tip">キャラクターへ近づくと「話す」に名前が表示されます。会話中とキャラクター一覧を開いている間は移動が止まります。</p>
+        <button id="helpOkBtn" class="panel-button primary full" type="button">OK</button>
+      </section>
+    </div>
+  </main>
+
+  <script src="js/dialogues.js"></script>
+  <script src="js/collision.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>
